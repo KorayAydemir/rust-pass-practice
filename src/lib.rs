@@ -1,4 +1,5 @@
 use std::{
+    error::Error,
     fs::{self, File},
     io::{self, stdout, Result, Write},
 };
@@ -47,7 +48,7 @@ enum ConfigKind {
 }
 
 pub fn run() -> Result<()> {
-    if let Err(_) = read_saved_pass() {
+    if read_saved_pass().is_err() || read_saved_pass().unwrap() == "" {
         println!("You don't have a saved pass enter a new one");
         Config::build(ConfigKind::Save)?;
         Ok(())
