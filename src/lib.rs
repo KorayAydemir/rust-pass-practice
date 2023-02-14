@@ -5,7 +5,6 @@ use std::{
 
 #[cfg(test)]
 mod tests {
-
     #[test]
     fn saving_pass() {
         use crate::read_saved_pass;
@@ -41,26 +40,36 @@ pub struct Config {
     saved_pass: String,
     pub entered_pass: String,
 }
+enum ConfigKind {
+    Save,
+    DontSave,
+}
+
+pub fn run() {
+    if let Err(_) = read_saved_pass() {
+        println!("You don't have a saved pass enter a new one");
+        Config::build(ConfigKind::Save).unwrap();
+    } else {
+        let config = Config::build(ConfigKind::DontSave).unwrap();
+        if is_pass_right(config) {
+            println!("you have gained access")
+        } else {
+            println!("wrong password, exiting program");
+            std::process::exit(0);
+        }
+    }
+}
 
 impl Config {
-    pub fn build() -> Result<Config> {
-        if let Err(_) = read_saved_pass() {
-            println!("You don't have a saved password, please enter a new one.");
-
-            let entered_pass = enter_pass()?;
-            save_pass(&entered_pass)?;
-            let saved_pass = entered_pass.clone();
-
-            return Ok(Config {
-                entered_pass,
-                saved_pass,
-            });
-        }
-
-        let saved_pass = read_saved_pass()?;
+    fn build(is_save: ConfigKind) -> Result<Config> {
         let entered_pass = enter_pass()?;
-
-        save_pass(&entered_pass)?;
+        let saved_pass = match is_save {
+            ConfigKind::Save => {
+                save_pass(&entered_pass)?;
+                entered_pass.clone()
+            }
+            ConfigKind::DontSave => read_saved_pass()?,
+        };
 
         Ok(Config {
             entered_pass,

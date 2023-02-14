@@ -1,6 +1,6 @@
-use rust_pass_practice::{is_pass_right, save_pass, Config};
+use rust_pass_practice::run;
 fn main() {
-    let config = Config::build().unwrap();
+    run();
 
     //  let entered_pass = get_pass().expect("An error occured while reading the password");
 
