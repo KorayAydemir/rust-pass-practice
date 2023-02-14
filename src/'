@@ -10,11 +10,10 @@ mod tests {
     fn saving_pass() {
         use crate::read_saved_pass;
         use crate::save_pass;
-
-        save_pass("testpass").unwrap();
+        save_pass("testpass");
         let saved_pass = read_saved_pass().unwrap();
 
-        assert_eq!(saved_pass, "testpass");
+        assert_eq!(saved_pass, "test the pass!./m");
     }
 
     #[test]
@@ -42,15 +41,16 @@ pub struct Config {
     pub entered_pass: String,
 }
 
+struct SaveLocation {}
+
+
 impl Config {
     pub fn build() -> Result<Config> {
         if let Err(_) = read_saved_pass() {
             println!("You don't have a saved password, please enter a new one.");
-
             let entered_pass = enter_pass()?;
             save_pass(&entered_pass)?;
             let saved_pass = entered_pass.clone();
-
             return Ok(Config {
                 entered_pass,
                 saved_pass,
@@ -70,7 +70,11 @@ impl Config {
 }
 
 fn read_saved_pass() -> Result<String> {
-    fs::read_to_string("saved_pass.txt")
+    if let Err(e) = fs::read_to_string("saved_pass.txt") {
+        return Err(e);
+    } else {
+        return fs::read_to_string("saved_pass.txt");
+    }
 }
 pub fn save_pass(entered_pass: &str) -> Result<&str> {
     let mut file = File::create("saved_pass.txt")?;

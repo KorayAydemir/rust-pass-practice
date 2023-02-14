@@ -1,11 +1,11 @@
-use rust_pass_practice::get_pass;
-use rust_pass_practice::save_pass;
-
+use rust_pass_practice::{is_pass_right, save_pass, Config};
 fn main() {
-    let entered_pass = get_pass().expect("An error occured while reading the password");
+    let config = Config::build().unwrap();
 
-    save_pass(&entered_pass).unwrap_or_else(|err| {
-        eprintln!("Problem saving the password: {err}");
-        std::process::exit(1)
-    });
+    //  let entered_pass = get_pass().expect("An error occured while reading the password");
+
+    //  save_pass(&entered_pass).unwrap_or_else(|err| {
+    //      eprintln!("Problem saving the password: {err}");
+    //      std::process::exit(1)
+    //  });
 }
